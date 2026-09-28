@@ -1,0 +1,8 @@
+flask
+google-generativeai
+faiss-cpu
+python-dotenv
+numpy
+pypdf
+werkzeug
+gunicorn
