@@ -7,15 +7,39 @@
 const DEFAULT_GEMINI_KEY = "";
 
 export function getGeminiApiKey(): string {
-  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (envKey && envKey !== "your_gemini_api_key_here") {
-    return envKey;
-  }
   const customKey = localStorage.getItem("sync_life_gemini_key");
-  if (customKey) {
-    return customKey;
+  if (customKey && customKey.trim()) {
+    return customKey.trim();
+  }
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (envKey && envKey !== "your_gemini_api_key_here" && !envKey.startsWith("AQ.Ab8")) {
+    return envKey.trim();
   }
   return DEFAULT_GEMINI_KEY;
+}
+
+export function getGroqApiKey(): string {
+  const customKey = localStorage.getItem("sync_life_groq_key");
+  if (customKey && customKey.trim()) {
+    return customKey.trim();
+  }
+  const envKey = import.meta.env.VITE_GROQ_API_KEY;
+  if (envKey && !envKey.startsWith("gsk_96GZoj9")) {
+    return envKey.trim();
+  }
+  return "";
+}
+
+export function getOpenRouterApiKey(): string {
+  const customKey = localStorage.getItem("sync_life_openrouter_key");
+  if (customKey && customKey.trim()) {
+    return customKey.trim();
+  }
+  const envKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (envKey && !envKey.startsWith("sk-or-v1-87eb")) {
+    return envKey.trim();
+  }
+  return "";
 }
 
 export interface GeminiMediaPart {
@@ -124,7 +148,7 @@ export async function generateGeminiContent(
   }
 
   // 2. High-speed Groq LLM Failover (Llama-3.3-70B-Versatile)
-  const groqKey = import.meta.env.VITE_GROQ_API_KEY || "";
+  const groqKey = getGroqApiKey();
   if (groqKey) {
     try {
       const messages: any[] = [];
@@ -160,7 +184,7 @@ export async function generateGeminiContent(
   }
 
   // 3. OpenRouter Failover (Gemini-2.0-Flash / GPT-4o-Mini)
-  const openRouterKey = import.meta.env.VITE_OPENROUTER_API_KEY || "";
+  const openRouterKey = getOpenRouterApiKey();
   if (openRouterKey) {
     try {
       const messages: any[] = [];
